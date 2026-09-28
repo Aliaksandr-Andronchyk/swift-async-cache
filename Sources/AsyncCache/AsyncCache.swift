@@ -37,7 +37,8 @@ public actor AsyncCache<Key: Hashable, Value> {
 
     /// Number of live (non-expired) entries currently stored.
     public var count: Int {
-        storage.count
+        let now = clock()
+        return storage.values.filter { $0.expiresAt > now }.count
     }
 
     /// Sum of costs of all currently stored entries.
