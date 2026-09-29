@@ -117,4 +117,13 @@ final class AsyncCacheTests: XCTestCase {
         let count = await cache.count
         XCTAssertEqual(count, 0)
     }
+
+    func testCurrentCostExcludesExpiredEntries() async {
+        var now = Date(timeIntervalSince1970: 0)
+        let cache = AsyncCache<String, Int>(defaultTTL: 10, costLimit: 100, clock: { now })
+        await cache.set(1, for: "a", cost: 5)
+        now = now.addingTimeInterval(11)
+        let cost = await cache.currentCost
+        XCTAssertEqual(cost, 0)
+    }
 }
