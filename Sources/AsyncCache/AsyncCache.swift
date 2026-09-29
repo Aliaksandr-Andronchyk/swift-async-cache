@@ -41,9 +41,10 @@ public actor AsyncCache<Key: Hashable, Value> {
         return storage.values.filter { $0.expiresAt > now }.count
     }
 
-    /// Sum of costs of all currently stored entries.
+    /// Sum of costs of all currently live (non-expired) entries.
     public var currentCost: Int {
-        totalCost
+        removeExpired()
+        return totalCost
     }
 
     /// Stores `value` for `key` with an optional TTL and cost override.
